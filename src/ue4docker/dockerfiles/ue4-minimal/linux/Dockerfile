@@ -78,8 +78,6 @@ COPY --from=builder --chown=ue4:ue4 /home/ue4/UnrealEngine/LocalBuilds/Engine/Li
 # COPY --from=builder --chown=ue4:ue4 /home/ue4/UnrealEngine/Components/TemplatesAndSamples /home/ue4/UnrealEngine
 # {% endif %}
 
-COPY --from=builder --chown=ue4:ue4 /home/ue4/UnrealEngine/Engine/Build /home/ue4/UnrealEngine/Engine/Build
-
 # Copy Install.ini from the builder image, so it can be used by tools that read the list of engine installations (e.g. ushell)
 COPY --from=builder --chown=ue4:ue4 /home/ue4/.config/Epic/UnrealEngine/Install.ini /home/ue4/.config/Epic/UnrealEngine/Install.ini
 WORKDIR /home/ue4/UnrealEngine
@@ -103,11 +101,11 @@ RUN bash -c 'set -e; source /home/ue4/UnrealEngine/Engine/Extras/ushell/ushell.s
 # Perform first-run setup for Mono, UnrealBuildTool and AutomationTool, which makes it possible to build Unreal projects and plugins as users other than `ue4`
 # (Note that this will only work with 4.26.0 and newer, older Engine versions will always require write access to `/home/ue4/UnrealEngine`)
 # See the comments on this issue for details, including the need to ensure $HOME is set correctly: <https://github.com/adamrehn/ue4-docker/issues/141>
-COPY print-editor-target.py /tmp/print-editor-target.py
-RUN EDITOR_TARGET=$(python3 /tmp/print-editor-target.py /home/ue4/UnrealEngine) && \
-	./Engine/Build/BatchFiles/Linux/Build.sh "$EDITOR_TARGET" Linux Development -SkipBuild && \
-	mkdir -p ./Engine/Programs/AutomationTool/Saved && \
-	chmod a+rw ./Engine/Programs/AutomationTool/Saved
+# COPY print-editor-target.py /tmp/print-editor-target.py
+# RUN EDITOR_TARGET=$(python3 /tmp/print-editor-target.py /home/ue4/UnrealEngine) && \
+# 	./Engine/Build/BatchFiles/Linux/Build.sh "$EDITOR_TARGET" Linux Development -SkipBuild && \
+# 	mkdir -p ./Engine/Programs/AutomationTool/Saved && \
+#	chmod a+rw ./Engine/Programs/AutomationTool/Saved
 
 # Enable Vulkan support for NVIDIA GPUs
 USER root
