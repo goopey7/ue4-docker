@@ -79,6 +79,7 @@ FROM ${NAMESPACE}/ue4-build-prerequisites:${PREREQS_TAG}
 # {% endif %}
 
 COPY --from=builder --chown=ue4:ue4 /home/ue4/UnrealEngine/LocalBuilds/Engine/Linux /home/ue4/UnrealEngine
+COPY --from=builder --chown=ue4:ue4 /home/ue4/UnrealEngine/Engine/Build/Build.version /home/ue4/UnrealEngine/Engine/Build/Build.version
 
 # Copy Install.ini from the builder image, so it can be used by tools that read the list of engine installations (e.g. ushell)
 COPY --from=builder --chown=ue4:ue4 /home/ue4/.config/Epic/UnrealEngine/Install.ini /home/ue4/.config/Epic/UnrealEngine/Install.ini
@@ -103,17 +104,6 @@ RUN bash -c 'set -e; source /home/ue4/UnrealEngine/Engine/Extras/ushell/ushell.s
 # Perform first-run setup for Mono, UnrealBuildTool and AutomationTool, which makes it possible to build Unreal projects and plugins as users other than `ue4`
 # (Note that this will only work with 4.26.0 and newer, older Engine versions will always require write access to `/home/ue4/UnrealEngine`)
 # See the comments on this issue for details, including the need to ensure $HOME is set correctly: <https://github.com/adamrehn/ue4-docker/issues/141>
-
-# Debug: Check if Build.version exists and is readable
-RUN echo "=== Current working directory ===" && \
-    pwd && \
-    echo "=== Checking for Build.version file ===" && \
-    ls -la /home/ue4/UnrealEngine/Engine/Build/Build.version && \
-    echo "=== File contents preview ===" && \
-    head -5 /home/ue4/UnrealEngine/Engine/Build/Build.version && \
-    echo "=== File permissions and ownership ===" && \
-    stat /home/ue4/UnrealEngine/Engine/Build/Build.version
-
 COPY print-editor-target.py /tmp/print-editor-target.py
 RUN EDITOR_TARGET=$(python3 /tmp/print-editor-target.py /home/ue4/UnrealEngine) && \
 	./Engine/Build/BatchFiles/Linux/Build.sh "$EDITOR_TARGET" Linux Development -SkipBuild && \
