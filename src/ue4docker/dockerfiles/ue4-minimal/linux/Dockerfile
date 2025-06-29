@@ -78,7 +78,7 @@ COPY --from=builder --chown=ue4:ue4 /home/ue4/UnrealEngine/LocalBuilds/Engine/Li
 # COPY --from=builder --chown=ue4:ue4 /home/ue4/UnrealEngine/Components/TemplatesAndSamples /home/ue4/UnrealEngine
 # {% endif %}
 
-COPY --from=builder --chown=ue4:ue4 /home/ue4/UnrealEngine/Engine/Build/Build.version /home/ue4/UnrealEngine/Engine/Build/Build.version
+COPY --from=builder --chown=ue4:ue4 /home/ue4/UnrealEngine/Engine/Build /home/ue4/UnrealEngine/Engine/Build
 
 # Copy Install.ini from the builder image, so it can be used by tools that read the list of engine installations (e.g. ushell)
 COPY --from=builder --chown=ue4:ue4 /home/ue4/.config/Epic/UnrealEngine/Install.ini /home/ue4/.config/Epic/UnrealEngine/Install.ini
